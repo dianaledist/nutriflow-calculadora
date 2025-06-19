@@ -41,7 +41,7 @@
             border: 1px solid rgba(255, 255, 255, 0.8);
             border-radius: 20px;
             padding: 2.5rem;
-            max-width: 520px;
+            max-width: 900px;
             width: 100%;
             box-shadow: 
                 0 4px 6px -1px rgba(0, 0, 0, 0.1),
@@ -93,8 +93,50 @@
 
         .protein-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 1rem;
+        }
+
+        /* Layout optimizado para desktop */
+        @media (min-width: 768px) {
+            .main-content {
+                display: grid;
+                grid-template-columns: 1fr 300px;
+                gap: 2rem;
+                align-items: start;
+            }
+            
+            .protein-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1.25rem;
+            }
+            
+            .nutrition-grid {
+                display: grid;
+                grid-template-columns: repeat(1, 1fr);
+                gap: 1rem;
+            }
+            
+            .results {
+                position: sticky;
+                top: 2rem;
+            }
+            
+            .section {
+                margin-bottom: 2rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .protein-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .protein-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
         }
 
         .protein-option {
@@ -200,7 +242,6 @@
             border: 1px solid #e2e8f0;
             border-radius: 16px;
             padding: 1.5rem;
-            margin-top: 1rem;
             opacity: 0;
             transform: translateY(10px);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -385,98 +426,102 @@
             <p>Tu calculadora nutricional inteligente</p>
         </div>
 
-        <div class="section">
-            <div class="section-title">
-                🍖 Selecciona tu proteína
-            </div>
-            <div class="protein-grid" id="proteinGrid">
-                <div class="protein-option" data-protein="pollo" role="button" tabindex="0" aria-label="Seleccionar pollo">
-                    <span class="protein-emoji" aria-hidden="true">🐔</span>
-                    <div class="protein-name">Pollo</div>
+        <div class="main-content">
+            <div class="left-panel">
+                <div class="section">
+                    <div class="section-title">
+                        🍖 Selecciona tu proteína
+                    </div>
+                    <div class="protein-grid" id="proteinGrid">
+                        <div class="protein-option" data-protein="pollo" role="button" tabindex="0" aria-label="Seleccionar pollo">
+                            <span class="protein-emoji" aria-hidden="true">🐔</span>
+                            <div class="protein-name">Pollo</div>
+                        </div>
+                        <div class="protein-option" data-protein="huevo" role="button" tabindex="0" aria-label="Seleccionar huevo">
+                            <span class="protein-emoji" aria-hidden="true">🥚</span>
+                            <div class="protein-name">Huevo</div>
+                        </div>
+                        <div class="protein-option" data-protein="carne" role="button" tabindex="0" aria-label="Seleccionar carne">
+                            <span class="protein-emoji" aria-hidden="true">🥩</span>
+                            <div class="protein-name">Carne</div>
+                        </div>
+                        <div class="protein-option" data-protein="pavo" role="button" tabindex="0" aria-label="Seleccionar pavo">
+                            <span class="protein-emoji" aria-hidden="true">🦃</span>
+                            <div class="protein-name">Pavo</div>
+                        </div>
+                        <div class="protein-option" data-protein="salmon" role="button" tabindex="0" aria-label="Seleccionar salmón">
+                            <span class="protein-emoji" aria-hidden="true">🐟</span>
+                            <div class="protein-name">Salmón</div>
+                        </div>
+                        <div class="protein-option" data-protein="atun" role="button" tabindex="0" aria-label="Seleccionar atún">
+                            <span class="protein-emoji" aria-hidden="true">🐠</span>
+                            <div class="protein-name">Atún</div>
+                        </div>
+                        <div class="protein-option" data-protein="tofu" role="button" tabindex="0" aria-label="Seleccionar tofu">
+                            <span class="protein-emoji" aria-hidden="true">🧈</span>
+                            <div class="protein-name">Tofu</div>
+                        </div>
+                        <div class="protein-option" data-protein="quinoa" role="button" tabindex="0" aria-label="Seleccionar quinoa">
+                            <span class="protein-emoji" aria-hidden="true">🌾</span>
+                            <div class="protein-name">Quinoa</div>
+                        </div>
+                        <div class="protein-option" data-protein="yogur" role="button" tabindex="0" aria-label="Seleccionar yogur griego">
+                            <span class="protein-emoji" aria-hidden="true">🥛</span>
+                            <div class="protein-name">Yogur Griego</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="protein-option" data-protein="huevo" role="button" tabindex="0" aria-label="Seleccionar huevo">
-                    <span class="protein-emoji" aria-hidden="true">🥚</span>
-                    <div class="protein-name">Huevo</div>
-                </div>
-                <div class="protein-option" data-protein="carne" role="button" tabindex="0" aria-label="Seleccionar carne">
-                    <span class="protein-emoji" aria-hidden="true">🥩</span>
-                    <div class="protein-name">Carne</div>
-                </div>
-                <div class="protein-option" data-protein="pavo" role="button" tabindex="0" aria-label="Seleccionar pavo">
-                    <span class="protein-emoji" aria-hidden="true">🦃</span>
-                    <div class="protein-name">Pavo</div>
-                </div>
-                <div class="protein-option" data-protein="salmon" role="button" tabindex="0" aria-label="Seleccionar salmón">
-                    <span class="protein-emoji" aria-hidden="true">🐟</span>
-                    <div class="protein-name">Salmón</div>
-                </div>
-                <div class="protein-option" data-protein="atun" role="button" tabindex="0" aria-label="Seleccionar atún">
-                    <span class="protein-emoji" aria-hidden="true">🐠</span>
-                    <div class="protein-name">Atún</div>
-                </div>
-                <div class="protein-option" data-protein="tofu" role="button" tabindex="0" aria-label="Seleccionar tofu">
-                    <span class="protein-emoji" aria-hidden="true">🧈</span>
-                    <div class="protein-name">Tofu</div>
-                </div>
-                <div class="protein-option" data-protein="quinoa" role="button" tabindex="0" aria-label="Seleccionar quinoa">
-                    <span class="protein-emoji" aria-hidden="true">🌾</span>
-                    <div class="protein-name">Quinoa</div>
-                </div>
-                <div class="protein-option" data-protein="yogur" role="button" tabindex="0" aria-label="Seleccionar yogur griego">
-                    <span class="protein-emoji" aria-hidden="true">🥛</span>
-                    <div class="protein-name">Yogur Griego</div>
-                </div>
-            </div>
-        </div>
 
-        <div class="section">
-            <div class="section-title">
-                ⚖️ Cantidad (cocido)
-            </div>
-            <div class="input-group">
-                <input 
-                    type="number" 
-                    id="weight" 
-                    class="input-field" 
-                    placeholder="100" 
-                    min="1" 
-                    max="1000"
-                    aria-label="Cantidad en gramos"
-                >
-                <span class="unit-label">gramos</span>
-            </div>
-        </div>
-
-        <div class="results" id="results">
-            <div class="empty-state" id="emptyState">
-                <div class="empty-state-icon">📊</div>
-                <div class="empty-state-text">Selecciona una proteína y cantidad para ver la información nutricional</div>
+                <div class="section">
+                    <div class="section-title">
+                        ⚖️ Cantidad (cocido)
+                    </div>
+                    <div class="input-group">
+                        <input 
+                            type="number" 
+                            id="weight" 
+                            class="input-field" 
+                            placeholder="100" 
+                            min="1" 
+                            max="1000"
+                            aria-label="Cantidad en gramos"
+                        >
+                        <span class="unit-label">gramos</span>
+                    </div>
+                </div>
             </div>
 
-            <div class="nutrition-content" id="nutritionContent" style="display: none;">
-                <div class="results-title">
-                    📈 Información Nutricional
+            <div class="results" id="results">
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-state-icon">📊</div>
+                    <div class="empty-state-text">Selecciona una proteína y cantidad para ver la información nutricional</div>
                 </div>
-                <div class="nutrition-grid">
-                    <div class="nutrition-item calories">
-                        <div class="nutrition-value" id="calories" aria-label="Calorías">0</div>
-                        <div class="nutrition-label">Calorías</div>
+
+                <div class="nutrition-content" id="nutritionContent" style="display: none;">
+                    <div class="results-title">
+                        📈 Información Nutricional
                     </div>
-                    <div class="nutrition-item protein">
-                        <div class="nutrition-value" id="protein" aria-label="Proteínas en gramos">0g</div>
-                        <div class="nutrition-label">Proteína</div>
-                    </div>
-                    <div class="nutrition-item fats">
-                        <div class="nutrition-value" id="fats" aria-label="Grasas en gramos">0g</div>
-                        <div class="nutrition-label">Grasas</div>
-                    </div>
-                    <div class="nutrition-item carbs">
-                        <div class="nutrition-value" id="carbs" aria-label="Carbohidratos en gramos">0g</div>
-                        <div class="nutrition-label">Carbohidratos</div>
-                    </div>
-                    <div class="nutrition-item fiber">
-                        <div class="nutrition-value" id="fiber" aria-label="Fibra en gramos">0g</div>
-                        <div class="nutrition-label">Fibra</div>
+                    <div class="nutrition-grid">
+                        <div class="nutrition-item calories">
+                            <div class="nutrition-value" id="calories" aria-label="Calorías">0</div>
+                            <div class="nutrition-label">Calorías</div>
+                        </div>
+                        <div class="nutrition-item protein">
+                            <div class="nutrition-value" id="protein" aria-label="Proteínas en gramos">0g</div>
+                            <div class="nutrition-label">Proteína</div>
+                        </div>
+                        <div class="nutrition-item fats">
+                            <div class="nutrition-value" id="fats" aria-label="Grasas en gramos">0g</div>
+                            <div class="nutrition-label">Grasas</div>
+                        </div>
+                        <div class="nutrition-item carbs">
+                            <div class="nutrition-value" id="carbs" aria-label="Carbohidratos en gramos">0g</div>
+                            <div class="nutrition-label">Carbohidratos</div>
+                        </div>
+                        <div class="nutrition-item fiber">
+                            <div class="nutrition-value" id="fiber" aria-label="Fibra en gramos">0g</div>
+                            <div class="nutrition-label">Fibra</div>
+                        </div>
                     </div>
                 </div>
             </div>

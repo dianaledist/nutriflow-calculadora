@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProteínaCalc - Calculadora Nutricional</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #1e293b;
+        }
+
+        .background-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.05;
+            z-index: -1;
+            background-image: 
+                radial-gradient(circle at 25% 25%, #3b82f6 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, #10b981 0%, transparent 50%);
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            padding: 2.5rem;
+            max-width: 520px;
+            width: 100%;
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .container:hover {
+            box-shadow: 
+                0 20px 25px -5px rgba(0, 0, 0, 0.1),
+                0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .header h1 {
+            color: #0f172a;
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #3b82f6, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            color: #334155;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .protein-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+
+        .protein-option {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 1.25rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .protein-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .protein-option:hover::before {
+            left: 100%;
+        }
+
+        .protein-option:hover {
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+        }
+
+        .protein-option.selected {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-color: #1d4ed8;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+        }
+
+        .protein-option.selected .protein-name {
+            color: white;
+        }
+
+        .protein-emoji {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+            display: block;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .protein-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #475569;
+            transition: color 0.2s ease;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 1rem 4rem 1rem 1.25rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: #ffffff;
+            color: #1e293b;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .input-field::placeholder {
+            color: #94a3b8;
+            font-weight: 400;
+        }
+
+        .unit-label {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            font-size: 0.9rem;
+            font-weight: 500;
+            pointer-events: none;
+        }
+
+        .results {
+            background: linear-gradient(135deg, #f8fafc, #ffffff);
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .results.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .results-title {
+            color: #0f172a;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .nutrition-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+            gap: 1rem;
+        }
+
+        .nutrition-item {
+            text-align: center;
+            background: #ffffff;
+            padding: 1.25rem 0.75rem;
+            border-radius: 12px;
+            border: 1px solid #f1f5f9;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nutrition-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent-color);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .nutrition-item:hover::before {
+            transform: scaleX(1);
+        }
+
+        .nutrition-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .calories { --accent-color: #f59e0b; }
+        .protein { --accent-color: #10b981; }
+        .fats { --accent-color: #ef4444; }
+        .carbs { --accent-color: #8b5cf6; }
+        .fiber { --accent-color: #06b6d4; }
+
+        .nutrition-value {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 0.25rem;
+            line-height: 1;
+        }
+
+        .nutrition-label {
+            color: #64748b;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #94a3b8;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state-text {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .protein-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 0.75rem;
+            }
+
+            .protein-option {
+                padding: 1rem;
+            }
+
+            .protein-emoji {
+                font-size: 2rem;
+            }
+
+            .nutrition-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
+            }
+
+            .nutrition-value {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nutrition-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animación de entrada */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container {
+            animation: slideUp 0.6s ease-out;
+        }
+
+        /* Mejoras de accesibilidad */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-pattern"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1>💪 NutriFlow</h1>
+            <p>Tu calculadora nutricional inteligente</p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">
+                🍖 Selecciona tu proteína
+            </div>
+            <div class="protein-grid" id="proteinGrid">
+                <div class="protein-option" data-protein="pollo" role="button" tabindex="0" aria-label="Seleccionar pollo">
+                    <span class="protein-emoji" aria-hidden="true">🐔</span>
+                    <div class="protein-name">Pollo</div>
+                </div>
+                <div class="protein-option" data-protein="huevo" role="button" tabindex="0" aria-label="Seleccionar huevo">
+                    <span class="protein-emoji" aria-hidden="true">🥚</span>
+                    <div class="protein-name">Huevo</div>
+                </div>
+                <div class="protein-option" data-protein="carne" role="button" tabindex="0" aria-label="Seleccionar carne">
+                    <span class="protein-emoji" aria-hidden="true">🥩</span>
+                    <div class="protein-name">Carne</div>
+                </div>
+                <div class="protein-option" data-protein="pavo" role="button" tabindex="0" aria-label="Seleccionar pavo">
+                    <span class="protein-emoji" aria-hidden="true">🦃</span>
+                    <div class="protein-name">Pavo</div>
+                </div>
+                <div class="protein-option" data-protein="salmon" role="button" tabindex="0" aria-label="Seleccionar salmón">
+                    <span class="protein-emoji" aria-hidden="true">🐟</span>
+                    <div class="protein-name">Salmón</div>
+                </div>
+                <div class="protein-option" data-protein="atun" role="button" tabindex="0" aria-label="Seleccionar atún">
+                    <span class="protein-emoji" aria-hidden="true">🐠</span>
+                    <div class="protein-name">Atún</div>
+                </div>
+                <div class="protein-option" data-protein="tofu" role="button" tabindex="0" aria-label="Seleccionar tofu">
+                    <span class="protein-emoji" aria-hidden="true">🧈</span>
+                    <div class="protein-name">Tofu</div>
+                </div>
+                <div class="protein-option" data-protein="quinoa" role="button" tabindex="0" aria-label="Seleccionar quinoa">
+                    <span class="protein-emoji" aria-hidden="true">🌾</span>
+                    <div class="protein-name">Quinoa</div>
+                </div>
+                <div class="protein-option" data-protein="yogur" role="button" tabindex="0" aria-label="Seleccionar yogur griego">
+                    <span class="protein-emoji" aria-hidden="true">🥛</span>
+                    <div class="protein-name">Yogur Griego</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">
+                ⚖️ Cantidad (cocido)
+            </div>
+            <div class="input-group">
+                <input 
+                    type="number" 
+                    id="weight" 
+                    class="input-field" 
+                    placeholder="100" 
+                    min="1" 
+                    max="1000"
+                    aria-label="Cantidad en gramos"
+                >
+                <span class="unit-label">gramos</span>
+            </div>
+        </div>
+
+        <div class="results" id="results">
+            <div class="empty-state" id="emptyState">
+                <div class="empty-state-icon">📊</div>
+                <div class="empty-state-text">Selecciona una proteína y cantidad para ver la información nutricional</div>
+            </div>
+
+            <div class="nutrition-content" id="nutritionContent" style="display: none;">
+                <div class="results-title">
+                    📈 Información Nutricional
+                </div>
+                <div class="nutrition-grid">
+                    <div class="nutrition-item calories">
+                        <div class="nutrition-value" id="calories" aria-label="Calorías">0</div>
+                        <div class="nutrition-label">Calorías</div>
+                    </div>
+                    <div class="nutrition-item protein">
+                        <div class="nutrition-value" id="protein" aria-label="Proteínas en gramos">0g</div>
+                        <div class="nutrition-label">Proteína</div>
+                    </div>
+                    <div class="nutrition-item fats">
+                        <div class="nutrition-value" id="fats" aria-label="Grasas en gramos">0g</div>
+                        <div class="nutrition-label">Grasas</div>
+                    </div>
+                    <div class="nutrition-item carbs">
+                        <div class="nutrition-value" id="carbs" aria-label="Carbohidratos en gramos">0g</div>
+                        <div class="nutrition-label">Carbohidratos</div>
+                    </div>
+                    <div class="nutrition-item fiber">
+                        <div class="nutrition-value" id="fiber" aria-label="Fibra en gramos">0g</div>
+                        <div class="nutrition-label">Fibra</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos nutricionales por 100g de proteína cocida
+        const nutritionData = {
+            pollo: { calories: 165, protein: 31, fats: 3.6, carbs: 0, fiber: 0 },
+            huevo: { calories: 155, protein: 13, fats: 11, carbs: 1.1, fiber: 0 },
+            carne: { calories: 250, protein: 26, fats: 15, carbs: 0, fiber: 0 },
+            pavo: { calories: 135, protein: 30, fats: 1, carbs: 0, fiber: 0 },
+            salmon: { calories: 208, protein: 25, fats: 12, carbs: 0, fiber: 0 },
+            atun: { calories: 132, protein: 28, fats: 1, carbs: 0, fiber: 0 },
+            tofu: { calories: 144, protein: 15.8, fats: 8.7, carbs: 2.8, fiber: 2.3 },
+            quinoa: { calories: 222, protein: 8.1, fats: 3.6, carbs: 39.4, fiber: 2.8 },
+            yogur: { calories: 100, protein: 17, fats: 0.4, carbs: 6, fiber: 0 }
+        };
+
+        let selectedProtein = null;
+
+        const proteinOptions = document.querySelectorAll('.protein-option');
+        const weightInput = document.getElementById('weight');
+        const results = document.getElementById('results');
+        const emptyState = document.getElementById('emptyState');
+        const nutritionContent = document.getElementById('nutritionContent');
+
+        // Función para calcular automáticamente
+        function calculateNutrition() {
+            if (!selectedProtein || !weightInput.value || weightInput.value <= 0) {
+                showEmptyState();
+                return;
+            }
+
+            const weight = parseFloat(weightInput.value);
+            const data = nutritionData[selectedProtein];
+            const factor = weight / 100;
+
+            // Calcular valores
+            const calories = Math.round(data.calories * factor);
+            const protein = Math.round(data.protein * factor * 10) / 10;
+            const fats = Math.round(data.fats * factor * 10) / 10;
+            const carbs = Math.round(data.carbs * factor * 10) / 10;
+            const fiber = Math.round(data.fiber * factor * 10) / 10;
+
+            // Mostrar resultados
+            document.getElementById('calories').textContent = calories;
+            document.getElementById('protein').textContent = protein + 'g';
+            document.getElementById('fats').textContent = fats + 'g';
+            document.getElementById('carbs').textContent = carbs + 'g';
+            document.getElementById('fiber').textContent = fiber + 'g';
+
+            showResults();
+        }
+
+        function showEmptyState() {
+            emptyState.style.display = 'block';
+            nutritionContent.style.display = 'none';
+            results.classList.add('show');
+        }
+
+        function showResults() {
+            emptyState.style.display = 'none';
+            nutritionContent.style.display = 'block';
+            results.classList.add('show');
+        }
+
+        // Selección de proteína
+        proteinOptions.forEach(option => {
+            option.addEventListener('click', selectProtein);
+            option.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    selectProtein.call(option);
+                }
+            });
+        });
+
+        function selectProtein() {
+            proteinOptions.forEach(opt => opt.classList.remove('selected'));
+            this.classList.add('selected');
+            selectedProtein = this.dataset.protein;
+            calculateNutrition();
+        }
+
+        // Cálculo automático al cambiar cantidad
+        weightInput.addEventListener('input', calculateNutrition);
+
+        // Mostrar estado inicial
+        showEmptyState();
+
+        // Mejoras de accesibilidad para navegación con teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Tab') {
+                document.body.style.outline = '2px solid #3b82f6';
+            }
+        });
+
+        document.addEventListener('click', () => {
+            document.body.style.outline = 'none';
+        });
+    </script>
+</body>
+</html>
